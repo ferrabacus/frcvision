@@ -155,12 +155,11 @@ if __name__ == "__main__":
 
 
 	# getting video
-	vid = cv2.VideoCapture(0)
+    vid = cv2.VideoCapture(0)
     vid.set(10,.05)
 
     # loop forever
     while True:
-		
         ret, frame = vid.read()
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         lower_green = np.array([75, 200, 200])
@@ -176,5 +175,3 @@ if __name__ == "__main__":
         #time.sleep(10)
     vid.release()
     cv2.destroyAllWindows()
-
-	
