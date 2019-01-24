@@ -10,6 +10,7 @@ import json
 import time
 import sys
 import cv2
+import numpy as np
 
 from cscore import CameraServer, VideoSource
 from networktables import NetworkTablesInstance
