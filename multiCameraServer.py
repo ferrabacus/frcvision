@@ -161,20 +161,20 @@ if __name__ == "__main__":
     # loop forever
     while True:
 		
-		ret, frame = vid.read()
-		hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-		lower_green = np.array([75, 200, 200])
-		upper_green = np.array([85, 255, 255])
-		mask = cv2.inRange(hsv, lower_green, upper_green)
-		res = cv2.bitwise_and(frame,frame,mask=mask)
-		cv2.imshow('orig',frame)
-		cv2.imshow('fff',res)
+        ret, frame = vid.read()
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        lower_green = np.array([75, 200, 200])
+        upper_green = np.array([85, 255, 255])
+        mask = cv2.inRange(hsv, lower_green, upper_green)
+        res = cv2.bitwise_and(frame,frame,mask=mask)
+        cv2.imshow('orig',frame)
+        cv2.imshow('fff',res)
 
-		if cv2.waitKey(1) & 0xFF == ord('q'):
-			break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
         #time.sleep(10)
-vid.release()
-cv2.destroyAllWindows()
+    vid.release()
+    cv2.destroyAllWindows()
 
 	
