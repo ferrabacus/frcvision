@@ -167,12 +167,13 @@ if __name__ == "__main__":
         upper_green = np.array([85, 255, 255])
         mask = cv2.inRange(hsv, lower_green, upper_green)
         res = cv2.bitwise_and(frame,frame,mask=mask)
-        cv2.imshow('orig',frame)
-        cv2.imshow('fff',res)
+        print("I'm in a while loop")
+        # cv2.imshow('orig',frame)
+        # cv2.imshow('fff',res)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+        #if cv2.waitKey(1) & 0xFF == ord('q'):
+         #       break
 
         #time.sleep(10)
     vid.release()
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
