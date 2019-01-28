@@ -150,12 +150,9 @@ if __name__ == "__main__":
         ntinst.startClientTeam(team)
 
     # start cameras
-    cameras = []
-    for cameraConfig in cameraConfigs:
-        cameras.append(startCamera(cameraConfig))
+    camera = startCamera(cameraConfig)
 
-    cvSink = cameras.getVideo()
-	#feed = cameras[0].getVideo()
+    cvSink = camera.getVideo()
 
     # loop forever
     while True:
