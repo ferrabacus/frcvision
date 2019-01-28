@@ -150,7 +150,7 @@ if __name__ == "__main__":
         ntinst.startClientTeam(team)
 
     # start cameras
-    camera = startCamera(cameraConfig)
+    camera = startCamera(cameraConfigs)
 
     cvSink = camera.getVideo()
 
