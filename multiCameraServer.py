@@ -154,12 +154,12 @@ if __name__ == "__main__":
     for cameraConfig in cameraConfigs:
         cameras.append(startCamera(cameraConfig))
 
-
-	feed = cameras[0].getVideo()
+    cvSink = cameras.getVideo()
+	#feed = cameras[0].getVideo()
 
     # loop forever
     while True:
-        feed.grabFrame()
+        cvSink.grabFrame()
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         lower_green = np.array([75, 200, 200])
         upper_green = np.array([85, 255, 255])
