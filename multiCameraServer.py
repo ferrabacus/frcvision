@@ -155,13 +155,11 @@ if __name__ == "__main__":
         cameras.append(startCamera(cameraConfig))
 
 
-	# getting video
-    vid = cv2.VideoCapture(0)
-    vid.set(10,.05)
+	feed = cameras[0].getVideo()
 
     # loop forever
     while True:
-        ret, frame = vid.read()
+        feed.grabFrame()
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         lower_green = np.array([75, 200, 200])
         upper_green = np.array([85, 255, 255])
