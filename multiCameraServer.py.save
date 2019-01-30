@@ -123,14 +123,14 @@ def readConfig():
     return True
 
 """Start running the camera."""
-#def startCamera(config):
-#    print("Starting camera '{}' on {}".format(config.name, config.path))
-#    camera = CameraServer.getInstance() \
-#        .startAutomaticCapture(name=config.name, path=config.path)
-#
-#    camera.setConfigJson(json.dumps(config.config))
-#
-#   return camera
+def startCamera(config):
+    print("Starting camera '{}' on {}".format(config.name, config.path))
+    camera = CameraServer.getInstance() \
+        .startAutomaticCapture(name=config.name, path=config.path)
+
+    camera.setConfigJson(json.dumps(config.config))
+
+    return camera
 
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
@@ -150,33 +150,22 @@ if __name__ == "__main__":
         ntinst.startClientTeam(team)
 
     # start cameras
-    cs = CameraServer.getInstance()
-    
-    camera = cs.startAutomaticCapture()
-    
-    camera.setResolution(640, 480)
-    
-    cvSink = cs.getVideo()
+    cameras = []
+    for cameraConfig in cameraConfigs:
+        cameras.append(startCamera(cameraConfig))
 
-    outputStream = cs.putVideo("Rectangle", 640, 480)
 
-    img = np.zeros(shape=(480, 640, 3), dtype=np.uint8)
+   feed = cameras[0].getVideo()
 
     # loop forever
     while True:
-
-        time, img = cvSink.grabFrame(img)
-
-        cv2.rectangle(img, (100, 100), (400, 400), (255, 0, 255), 5)
-
-        status = cv2.imwrite("picture.jpg", img)
-        
-        print("Image written to file system..... :[ ", status)
-
-        outputStream.putFrame(img)
-
+        feed.grabFrame()
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        lower_green = np.array([75, 200, 200])
+        upper_green = np.array([85, 255, 255])
+        mask = cv2.inRange(hsv, lower_green, upper_green)
+        res = cv2.bitwise_and(frame,frame,mask=mask)
         print("I'm in a while loop")
-
         # cv2.imshow('orig',frame)
         # cv2.imshow('fff',res)
 
@@ -184,4 +173,5 @@ if __name__ == "__main__":
          #       break
 
         #time.sleep(10)
+    vid.release()
     #cv2.destroyAllWindows()
