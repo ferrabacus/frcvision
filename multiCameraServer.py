@@ -123,14 +123,14 @@ def readConfig():
     return True
 
 """Start running the camera."""
-def startCamera(config):
-    print("Starting camera '{}' on {}".format(config.name, config.path))
-    camera = CameraServer.getInstance() \
-        .startAutomaticCapture(name=config.name, path=config.path)
-
-    camera.setConfigJson(json.dumps(config.config))
-
-    return camera
+#def startCamera(config):
+#    print("Starting camera '{}' on {}".format(config.name, config.path))
+#    camera = CameraServer.getInstance() \
+#        .startAutomaticCapture(name=config.name, path=config.path)
+#
+#    camera.setConfigJson(json.dumps(config.config))
+#
+#   return camera
 
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
@@ -150,8 +150,12 @@ if __name__ == "__main__":
         ntinst.startClientTeam(team)
 
     # start cameras
-    camera = startCamera(cameraConfigs)
-
+    cs = CameraServer.getInstance()
+    
+    camera = cs.startAutomaticCapture()
+    
+    camera.setResolution(640, 480)
+    
     cvSink = camera.getVideo()
 
     # loop forever
