@@ -151,6 +151,8 @@ if __name__ == "__main__":
 
     # start cameras
     cs = CameraServer.getInstance()
+
+   # cs.enableLogging()
     
     camera = cs.startAutomaticCapture()
     
@@ -165,18 +167,26 @@ if __name__ == "__main__":
     # loop forever
     while True:
 
-        time, img = cvSink.grabFrame(img)
+        time, frame = cvSink.grabFrame(img)
 
-        cv2.rectangle(img, (100, 100), (400, 400), (255, 0, 255), 5)
+        #cv2.rectangle(img, (100, 100), (400, 400), (255, 0, 255), 5)
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        #lower_green = np.array([75, 200, 200])
+        #upper_green = np.array([85, 255, 255])
+        lower_green = np.array([30, 200, 200])
+        upper_green = np.array([100, 255, 255])
+        mask = cv2.inRange(hsv, lower_green, upper_green)
+        res = cv2.bitwise_and(frame,frame,mask=mask)
 
         status = cv2.imwrite("picture.jpg", img)
         
         print("Image written to file system..... :[ ", status)
 
-        outputStream.putFrame(img)
+        outputStream.putFrame(res)
 
         print("I'm in a while loop")
 
+   # import logging
         # cv2.imshow('orig',frame)
         # cv2.imshow('fff',res)
 
