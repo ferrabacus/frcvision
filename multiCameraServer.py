@@ -13,7 +13,7 @@ import cv2
 import numpy as np
 
 from cscore import CameraServer, VideoSource
-from networktables import NetworkTablesInstance
+from networktables import NetworkTables
 
 #   JSON format:
 #   {
@@ -141,13 +141,20 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # start NetworkTables
-    ntinst = NetworkTablesInstance.getDefault()
-    if server:
-        print("Setting up NetworkTables server")
-        ntinst.startServer()
-    else:
-        print("Setting up NetworkTables client for team {}".format(team))
-        ntinst.startClientTeam(team)
+    #ntinst = NetworkTablesInstance.getDefault()
+    #if server:
+        #print("Setting up NetworkTables server")
+        #ntinst.startServer()
+    #else:
+        #print("Setting up NetworkTables client for team {}".format(team))
+        #ntinst.startClientTeam(team)
+    NetworkTables.initialize(server='roborio-5049-frc.local')
+    
+    #print("Vision", NetworkTablesInstance.isConnected())
+    
+
+
+    vp = NetworkTables.getTable("Vision")
 
     # start cameras
     cs = CameraServer.getInstance()
@@ -164,6 +171,8 @@ if __name__ == "__main__":
 
     img = np.zeros(shape=(480, 640, 3), dtype=np.uint8)
 
+    isDebug = True
+
     # loop forever
     while True:
 
@@ -171,17 +180,45 @@ if __name__ == "__main__":
 
         #cv2.rectangle(img, (100, 100), (400, 400), (255, 0, 255), 5)
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        #frame = cv2.GaussianBlur(hsv, (7, 7), 0)
         #lower_green = np.array([75, 200, 200])
         #upper_green = np.array([85, 255, 255])
-        lower_green = np.array([30, 200, 200])
+        lower_green = np.array([30, 200, 25])
         upper_green = np.array([100, 255, 255])
         mask = cv2.inRange(hsv, lower_green, upper_green)
-        res = cv2.bitwise_and(frame,frame,mask=mask)
+        kernel = np.ones((5,5), np.uint8)
+        mask = cv2.erode (mask, kernel, iterations = 1)
+        mask = cv2.dilate(mask, kernel, iterations = 1)
+        if  isDebug:
+             res = cv2.bitwise_and(frame,frame,mask=mask)
+        im2, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        if len(contours) > 0:
+             for cnt in contours:
+                 area = cv2.contourArea(cnt)
+                 if area > 250:
+                     cnt = contours[0]
+                     hull = cv2.convexHull(cnt)
+                     rect = cv2.minAreaRect(hull)
+                     box = cv2.boxPoints(rect)
+                     box = np.int0(box)
+
+                     if isDebug:
+                         cv2.drawContours(res, [box], -1, (255, 0, 128), 2)
+                     M = cv2.moments(box)
+                     if M["m00"] != 0:
+                         centerX = int(M["m10"] / M["m00"])
+                         centerY = int(M["m01"] / M["m00"])
+                     else:
+                         centerX, centerY = 0, 0
+                     area = cv2.contourArea(box)
+                     perimeter = cv2.arcLength(box, True)
+                     vp.putNumber('centerX', centerX)
+                     vp.putNumber('centerY', centerY)
+                     vp.putNumber('area', area)
 
         status = cv2.imwrite("picture.jpg", img)
-        
-        print("Image written to file system..... :[ ", status)
 
+        print("Image written to file system..... :[ ", status)
         outputStream.putFrame(res)
 
         print("I'm in a while loop")
